@@ -1,0 +1,9 @@
+# Ensure LF line endings for RISC-V assembly, C/H headers, Linker scripts, GTKWave, LaTeX, and Markdown
+*.s text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.ld text eol=lf
+*.gtkw text eol=lf
+*.tex text eol=lf
+*.md text eol=lf
+*.txt text eol=lf

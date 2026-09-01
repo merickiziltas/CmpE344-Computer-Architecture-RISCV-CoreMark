@@ -1,0 +1,15 @@
+# Compiled executables & object files
+*.exe
+*.o
+*.out
+*.elf
+*.bin
+
+# Build logs
+*.log
+run*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini

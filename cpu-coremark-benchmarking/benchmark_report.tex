@@ -1,0 +1,145 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{hyperref}
+
+\geometry{a4paper, margin=0.9in}
+
+\title{\textbf{CMPE 344 Pre-Lab 3 Report} \\ Benchmarking Processor Designs with CoreMark}
+\author{Group ID: [YOUR GROUP ID] \\ Student Names: [YOUR NAMES]}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This report presents the results of benchmarking processor performance using CoreMark, an industry-standard benchmark developed by the Embedded Microprocessor Benchmark Consortium (EEMBC). CoreMark is designed to measure CPU core performance in a consistent and reliable manner across different platforms and compilers.
+
+\subsection{System Configuration}
+\textbf{Hardware:}
+\begin{itemize}
+    \item Processor: Intel Core i7-12700H (12th Generation, Alder Lake)
+    \item Base Clock Speed: 2.3 GHz
+    \item Power Mode: High Performance (AC powered)
+\end{itemize}
+
+\textbf{Software:}
+\begin{itemize}
+    \item Compiler: GCC 6.3.0 (MinGW)
+    \item Operating System: Windows
+    \item Benchmark: CoreMark 1.0
+\end{itemize}
+
+\section{Benchmark Results}
+
+The benchmark was executed five times for each compiler optimization flag to ensure statistical reliability. Table~\ref{tab:results} presents the complete results.
+
+\begin{table}[H]
+\centering
+\caption{CoreMark Performance Results (Iterations/Sec)}
+\label{tab:results}
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Optimization} & \textbf{Run 1} & \textbf{Run 2} & \textbf{Run 3} & \textbf{Run 4} & \textbf{Run 5} & \textbf{Average} \\
+\midrule
+-O2 (Default) & 27911.52 & 28238.62 & 28178.94 & 28376.84 & 28278.54 & \textbf{28196.89} \\
+-O0 & 8853.12 & 8997.22 & 8843.15 & 8980.32 & 8989.13 & \textbf{8932.59} \\
+-O1 & 22622.73 & 22770.40 & 22716.95 & 22827.58 & 22763.49 & \textbf{22740.23} \\
+-O3 & 28853.78 & 29017.05 & 28830.91 & 28853.78 & 28864.19 & \textbf{28883.94} \\
+-Ofast & 28964.52 & 28882.95 & 28949.84 & 28899.65 & 28918.45 & \textbf{28923.08} \\
+-march=native & 36778.23 & 36952.64 & 36902.64 & 36585.37 & 36873.16 & \textbf{36818.41} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Performance Analysis}
+
+The results demonstrate significant performance variations across different compiler optimization levels:
+
+\textbf{-O0 (No Optimization):} Baseline performance of 8932.59 iterations/sec with no compiler optimizations. Code is compiled for debugging, representing the worst-case scenario.
+
+\textbf{-O1 (Basic Optimization):} Achieved 22740.23 iterations/sec, a 2.55× speedup over -O0. This level applies fundamental optimizations without significantly increasing compilation time or code size.
+
+\textbf{-O2 (Moderate Optimization):} Reached 28196.89 iterations/sec, representing a 3.16× improvement over -O0. This is CoreMark's default optimization level, balancing performance and code size.
+
+\textbf{-O3 (Aggressive Optimization):} Produced 28883.94 iterations/sec, only 2.4\% faster than -O2. The marginal improvement suggests CoreMark is not heavily dependent on advanced optimizations like loop unrolling and aggressive function inlining.
+
+\textbf{-Ofast (Fast Math):} Achieved 28923.08 iterations/sec, virtually identical to -O3 with only 0.14\% difference. This minimal difference indicates CoreMark does not heavily utilize floating-point operations that would benefit from relaxed IEEE compliance.
+
+\textbf{-march=native (Architecture-Specific):} Delivered the highest performance at 36818.41 iterations/sec, a 30.6\% improvement over -O2 and 4.12× faster than -O0. This optimization enables the use of processor-specific instruction sets including AVX2 and SSE4.2, demonstrating the significant impact of hardware-specific optimizations on performance.
+
+\section{CoreMark Key Algorithms}
+
+CoreMark exercises four primary computational workloads representative of embedded systems:
+
+\subsection{Linked List Operations}
+Tests pointer traversal, memory access patterns, and sorting algorithms. The benchmark uses a two-level indirection structure where 25\% of list pointers point to sequential memory areas and 75\% are distributed non-sequentially, emulating real-world linked list behavior after multiple add/remove operations.
+
+\textbf{Operations:} Multiple find operations with full list traversal, merge sort based on data16 value with CRC calculation, and merge sort based on idx value to restore original state.
+
+\subsection{Matrix Multiply}
+Exercises tight computational loops and arithmetic operations, serving as the basis for many complex algorithms. The benchmark divides available memory into three N×N matrices (for 2KB buffer: 12×12 matrices).
+
+\textbf{Operations:} Matrix A multiplied by a constant, Matrix A multiplied by column X of Matrix B, and full Matrix A × Matrix B multiplication. Each operation accumulates upper bits of result values.
+
+\subsection{State Machine}
+Tests branch prediction, switch statements, and conditional execution using a Moore-type finite state machine that parses string input to identify and classify numeric formats.
+
+\textbf{Operations:} Parse comma-separated values (integer, floating-point, scientific notation), count state transitions and final states, inject errors at intervals, re-parse modified input, and restore to original form for validation.
+
+\subsection{CRC (Cyclic Redundancy Check)}
+Tests bit manipulation and data integrity validation. Calculates CRC checksums for all algorithm outputs to ensure correct execution and provide validation across different platforms.
+
+\section{RISC-V ISA Extension Sets}
+
+Understanding RISC-V instruction set extensions is crucial for Lab 3, where different ISA configurations will be benchmarked.
+
+\subsection{RV32I - Base Integer (32-bit)}
+The foundational 32-bit integer instruction set that all RISC-V implementations must support. Features include 32 general-purpose 32-bit registers (x0-x31), integer arithmetic and logical operations, load/store instructions for memory access, and branch/jump instructions for control flow.
+
+\textbf{Use Case:} Minimal viable processor for simple embedded applications.
+
+\subsection{RV32IM - Integer with Multiply/Divide}
+Extends RV32I with hardware multiply and divide operations including MUL, MULH, MULHU, MULHSU for multiplication and DIV, DIVU, REM, REMU for division and remainder operations.
+
+\textbf{Use Case:} Systems requiring frequent mathematical computations without floating-point support.
+
+\subsection{RV32IMC - IM with Compressed Instructions}
+Adds compressed 16-bit instruction encoding to RV32IM, reducing code size by approximately 25-30\% while maintaining full functionality. The compressed instructions coexist with standard 32-bit instructions, improving instruction fetch efficiency.
+
+\textbf{Use Case:} Memory-constrained embedded systems where code density is critical.
+
+\subsection{RV32GC - General Purpose Configuration}
+Comprehensive instruction set combining I (base integer), M (multiply/divide), A (atomic instructions for multi-threading), F (single-precision floating-point), D (double-precision floating-point), and C (compressed instructions).
+
+\textbf{Use Case:} General-purpose processors capable of running full operating systems like Linux.
+
+\subsection{RV64I - Base Integer (64-bit)}
+64-bit extension of the base integer instruction set with 32 general-purpose 64-bit registers, 64-bit address space supporting large memory configurations, and additional 64-bit arithmetic operations (ADDW, SUBW, etc.).
+
+\textbf{Use Case:} Server and desktop systems requiring large memory addressing or 64-bit precision.
+
+\section{Conclusion}
+
+This pre-lab exercise demonstrated the significant impact of compiler optimizations on processor performance measurement. The benchmark results reveal several important insights:
+
+\begin{itemize}
+    \item Basic optimizations (-O1) provide substantial performance gains (2.55× speedup) with minimal compilation overhead, making them suitable for development environments.
+    
+    \item Moderate optimizations (-O2) offer the best balance between performance and code size, achieving 3.16× improvement over unoptimized code.
+    
+    \item Advanced generic optimizations (-O3, -Ofast) show diminishing returns for CoreMark's workload, with less than 3\% improvement over -O2.
+    
+    \item Architecture-specific optimizations (-march=native) unlock significant performance by utilizing modern instruction set extensions (AVX2, SSE4.2), achieving 30.6\% improvement over -O2.
+    
+    \item Consistent results across five runs validate the reliability of the benchmark methodology.
+\end{itemize}
+
+The 4.12× performance difference between unoptimized (-O0) and architecture-specific (-march=native) builds emphasizes the importance of proper compiler configuration in embedded systems development. The understanding of CoreMark's algorithms and RISC-V ISA extensions gained through this exercise provides essential foundation for Lab 3, where we will evaluate these concepts on simulated RISC-V processors with different ISA configurations.
+
+\end{document}
