@@ -1,7 +1,7 @@
-# 💻 CmpE 344 - Computer Architecture & RISC-V CoreMark Suite
+# 💻 CmpE 344 - Computer Organization & RISC-V CoreMark Suite
 
 ![Assembly](https://img.shields.io/badge/Language-RISC--V_Assembly-002244?style=for-the-badge&logo=riscv&logoColor=white)
-![Course](https://img.shields.io/badge/Course-CmpE_344_Computer_Architecture-blue?style=for-the-badge)
+![Course](https://img.shields.io/badge/Course-CmpE_344_Computer_Organization-blue?style=for-the-badge)
 ![Benchmark](https://img.shields.io/badge/Benchmark-EEMBC_CoreMark-orange?style=for-the-badge)
 ![Tool](https://img.shields.io/badge/Tools-GTKWave_%7C_Linker_Scripts-darkgreen?style=for-the-badge)
 ![Report](https://img.shields.io/badge/Report-LaTeX_Academic_Paper-008080?style=for-the-badge&logo=latex&logoColor=white)
